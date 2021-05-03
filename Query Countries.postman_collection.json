@@ -1,0 +1,614 @@
+{
+	"info": {
+		"_postman_id": "82e3f343-0efa-4b00-96f0-81590d892101",
+		"name": "Query Countries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SAMPLE_S01 - Successful Query countries",
+			"item": [
+				{
+					"name": "SAMPLE_S01TS01 - The user queries the countries with all values displayed in the response",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"/**\r",
+									" * This function verifies the field attributes of the request body\r",
+									" */\r",
+									"var verifyInputs = () => {\r",
+									"    let requestEndpoint = (request.url);\r",
+									"    pm.expect(requestEndpoint).is.equal(pm.collectionVariables.get(\"graphQLProxy\"));\r",
+									"    console.log(\"Request Endpoint: \"+ requestEndpoint);\r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyInputs\",verifyInputs.toString());\r",
+									"\r",
+									"/**\r",
+									" * This function verifies the Response Body\r",
+									" */\r",
+									"var verifyResponse = (err, response) => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    var code = pm.iterationData.get(\"code\");\r",
+									"    var codeList = code.split(\"|\");\r",
+									"\r",
+									"    var name = pm.iterationData.get(\"name\");\r",
+									"    var nameList = name.split(\"|\");\r",
+									"\r",
+									"    var capital = pm.iterationData.get(\"capital\");\r",
+									"    var capitalList = capital.split(\"|\");\r",
+									"\r",
+									"    var currency = pm.iterationData.get(\"currency\");\r",
+									"    var currencyList = currency.split(\"|\");\r",
+									"    \r",
+									"    var countriesLength = jsonData.data.countries.length;\r",
+									"\r",
+									"    for(var i = 0; i < countriesLength; i++){\r",
+									"        pm.expect(jsonData.data.countries[i].code).is.eql(codeList[i]);\r",
+									"        pm.expect(jsonData.data.countries[i].name).is.eql(nameList[i]);\r",
+									"        \r",
+									"        if(capitalList[i] == \"null\"){\r",
+									"            var jsonCapital = JSON.parse(capitalList[i]);\r",
+									"            pm.expect(jsonData.data.countries[i].capital).is.eql(jsonCapital);\r",
+									"            return;\r",
+									"        }else{\r",
+									"            pm.expect(jsonData.data.countries[i].capital).is.eql(capitalList[i]);\r",
+									"        }\r",
+									"\r",
+									"        if(currencyList[i] == \"null\"){\r",
+									"            var jsonCurrency = JSON.parse(currencyList[i]);\r",
+									"            pm.expect(jsonData.data.countries[i].currency).is.eql(jsonCurrency);\r",
+									"            return;\r",
+									"        }else{\r",
+									"            pm.expect(jsonData.data.countries[i].currency).is.eql(currencyList[i]);\r",
+									"        }\r",
+									"        \r",
+									"    }\r",
+									"\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponseCode200\"))();\r",
+									"}\r",
+									"pm.collectionVariables.set(\"verifyResponse\", verifyResponse.toString());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1. Given I am an End User for the Sample Application\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyIfLoginAuthenticated\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"2. When I send the query to this endpoint 'https://countries.trevorblades.com/'\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyInputs\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"3. Then I expect the results of the GraphQL query with all values in the response payload\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponse\"))();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "apikey",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"query\": \"{ countries { {{codeField}} {{nameField}} {{capitalField}} {{currencyField}} } }\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{graphQLProxy}}",
+							"host": [
+								"{{graphQLProxy}}"
+							]
+						},
+						"description": "The user queries the forumTags with all values displayed in the response"
+					},
+					"response": []
+				},
+				{
+					"name": "SAMPLE_S01TS02 - The user queries the countries, with all field attributes displayed in the response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1. Given I am an End User for the Sample Application\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyIfLoginAuthenticated\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"2. When I send the query to this endpoint 'https://countries.trevorblades.com/'\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyInputs\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"3. Then I expect the results of the GraphQL query with all field attributes validated in the response payload\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponse\"))();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"/**\r",
+									" * This function verifies the field attributes of the request body\r",
+									" */\r",
+									"var verifyInputs = () => {\r",
+									"    let requestEndpoint = (request.url);\r",
+									"    pm.expect(requestEndpoint).is.equal(pm.collectionVariables.get(\"graphQLProxy\"));\r",
+									"    console.log(\"Request Endpoint: \"+ requestEndpoint);\r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyInputs\",verifyInputs.toString());\r",
+									"\r",
+									"/**\r",
+									" * This function verifies the Response Body\r",
+									" */\r",
+									"var verifyResponse = (err, response) => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    var codeField = pm.iterationData.get(\"codeField\");\r",
+									"    var nameField = pm.iterationData.get(\"nameField\");\r",
+									"    var capitalField = pm.iterationData.get(\"capitalField\");\r",
+									"    var currencyField = pm.iterationData.get(\"currencyField\");\r",
+									"    \r",
+									"    var countriesLength = jsonData.data.countries.length;\r",
+									"\r",
+									"    for(var i = 0; i < countriesLength; i++){\r",
+									"        \r",
+									"        pm.expect(jsonData.data.countries[i]).to.have.property(codeField);\r",
+									"        pm.expect(jsonData.data.countries[i]).to.have.property(nameField);\r",
+									"        pm.expect(jsonData.data.countries[i]).to.have.property(capitalField);\r",
+									"        pm.expect(jsonData.data.countries[i]).to.have.property(currencyField);\r",
+									"   \r",
+									"    }\r",
+									"\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponseCode200\"))();\r",
+									"}\r",
+									"pm.collectionVariables.set(\"verifyResponse\", verifyResponse.toString());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"query\": \"{ countries { {{codeField}} {{nameField}} {{capitalField}} {{currencyField}} } }\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{graphQLProxy}}",
+							"host": [
+								"{{graphQLProxy}}"
+							]
+						},
+						"description": "The user queries the forumTags, with all field attributes displayed in the response"
+					},
+					"response": []
+				},
+				{
+					"name": "SAMPLE_S01TS03 - The user queries the countries with the correct length of the response object",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1. Given I am an End User for the Sample Application\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyIfLoginAuthenticated\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"2. When I send the query to this endpoint 'https://countries.trevorblades.com/'\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyInputs\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"3. Then I expect the results of the GraphQL query with the correct object length in the response payload\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponse\"))();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"/**\r",
+									" * This function verifies the field attributes of the request body\r",
+									" */\r",
+									"var verifyInputs = () => {\r",
+									"    let requestEndpoint = (request.url);\r",
+									"    pm.expect(requestEndpoint).is.equal(pm.collectionVariables.get(\"graphQLProxy\"));\r",
+									"    console.log(\"Request Endpoint: \"+ requestEndpoint);\r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyInputs\",verifyInputs.toString());\r",
+									"\r",
+									"/**\r",
+									" * This function verifies the Response Body\r",
+									" */\r",
+									"var verifyResponse = (err, response) => {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    var countriesLength = jsonData.data.countries.length;\r",
+									"    pm.expect(countriesLength).to.equal(250);\r",
+									"\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponseCode200\"))();\r",
+									"}\r",
+									"pm.collectionVariables.set(\"verifyResponse\", verifyResponse.toString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"query\": \"{ countries { {{codeField}} {{nameField}} {{capitalField}} {{currencyField}} } }\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{graphQLProxy}}",
+							"host": [
+								"{{graphQLProxy}}"
+							]
+						},
+						"description": "The user queries the forumTags with all attribute type of the object displayed in the response"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SAMPLE_S02 - Unsuccessful Query countries",
+			"item": [
+				{
+					"name": "SAMPLE_S02TS01 - User able to get correct response error for invalid GraphQL query",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//veriify if user is Not authenticated\r",
+									"var verifyIfNotAuthenticated = () => {\r",
+									"    if (pm.response.to.have.status(\"Bad Request\")) {\r",
+									"        console.log(\"User is not authorized, Not Successfully logged-in\")\r",
+									"    }\r",
+									"}\r",
+									"pm.collectionVariables.set(\"verifyIfNotAuthenticated\", verifyIfNotAuthenticated.toString());\r",
+									"\r",
+									"\r",
+									"//function that verify input values\r",
+									"var verifyInputs = () => {\r",
+									"    let requestEndpoint = (request.url);\r",
+									"    pm.expect(requestEndpoint).is.equal(pm.collectionVariables.get(\"graphQLProxy\"));\r",
+									"    console.log(\"Request Endpoint: \"+ requestEndpoint);\r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyInputs\",verifyInputs.toString());\r",
+									"\r",
+									"\r",
+									"//verifies the response error message: Invalid ApiKey\r",
+									"var verifyResponse = () => {\r",
+									"    var graphqlErrorCode = \"GRAPHQL_VALIDATION_FAILED\";\r",
+									"    var graphQLErrorMessage = \"Cannot query field\";\r",
+									"\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('errors');\r",
+									"    pm.expect(jsonData.errors[0].message).to.include(graphQLErrorMessage);\r",
+									"    pm.expect(jsonData.errors[0].extensions.code).to.include(graphqlErrorCode);\r",
+									"    pm.response.to.have.status(400);\r",
+									"    console.log(\"Invalid GraphQL query\");\r",
+									"    \r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyResponse\",verifyResponse.toString());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1. Given I am an End User for the Sample Application\", function () {\r",
+									"   eval(pm.collectionVariables.get(\"verifyIfNotAuthenticated\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"2. When I send the invalid query to this endpoint 'https://countries.trevorblades.com/\", function () {\r",
+									"   eval(pm.collectionVariables.get(\"verifyInputs\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"3. Then I expect the error results of the GraphQL query to be in the response payload\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponse\"))();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"query\": \"{ countriesInvalid { {{codeField}} {{nameField}} {{capitalField}} {{currencyField}} } }\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{graphQLProxy}}",
+							"host": [
+								"{{graphQLProxy}}"
+							]
+						},
+						"description": "User able to get correct response error for invalid GraphQL query"
+					},
+					"response": []
+				},
+				{
+					"name": "SAMPLE_S02TS02 - User able to get correct response error for missing GraphQL query",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//veriify if user is Not authenticated\r",
+									"var verifyIfNotAuthenticated = () => {\r",
+									"    if (pm.response.to.have.status(\"Bad Request\")) {\r",
+									"        console.log(\"User is not authorized, Not Successfully logged-in\")\r",
+									"    }\r",
+									"}\r",
+									"pm.collectionVariables.set(\"verifyIfNotAuthenticated\", verifyIfNotAuthenticated.toString());\r",
+									"\r",
+									"\r",
+									"//function that verify input values\r",
+									"var verifyInputs = () => {\r",
+									"    let requestEndpoint = (request.url);\r",
+									"    pm.expect(requestEndpoint).is.equal(pm.collectionVariables.get(\"graphQLProxy\"));\r",
+									"    console.log(\"Request Endpoint: \"+ requestEndpoint);\r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyInputs\",verifyInputs.toString());\r",
+									"\r",
+									"\r",
+									"//verifies the response error message: Invalid ApiKey\r",
+									"var verifyResponse = () => {\r",
+									"    var graphQLErrorMessage = \"Must provide query string\";\r",
+									"    var textData = pm.response.text();\r",
+									"    \r",
+									"    pm.expect(textData).to.include(graphQLErrorMessage);\r",
+									"    pm.response.to.have.status(400);\r",
+									"    \r",
+									"};\r",
+									"pm.collectionVariables.set(\"verifyResponse\",verifyResponse.toString());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1. Given I am an End User for the Sample Application\", function () {\r",
+									"   eval(pm.collectionVariables.get(\"verifyIfNotAuthenticated\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"2. When I send the missing query to this endpoint 'https://countries.trevorblades.com/\", function () {\r",
+									"   eval(pm.collectionVariables.get(\"verifyInputs\"))();\r",
+									"});\r",
+									"\r",
+									"pm.test(\"3. Then I expect the error results of the GraphQL query to be in the response payload\", function () {\r",
+									"    eval(pm.collectionVariables.get(\"verifyResponse\"))();\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphQLProxy}}",
+							"host": [
+								"{{graphQLProxy}}"
+							]
+						},
+						"description": "User able to get correct response error for missing GraphQL query"
+					},
+					"response": []
+				}
+			],
+			"description": "Unsuccessful query rewardsPoints - rewardsActivity",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"/**",
+					" * This function verifies the response code 200",
+					" */",
+					"var verifyResponseCode200 = () => {",
+					"    pm.response.to.have.status(200);",
+					"    console.log(\"Response code is 200\");",
+					"}",
+					"pm.collectionVariables.set(\"verifyResponseCode200\", verifyResponseCode200.toString());",
+					"",
+					"/**",
+					" * This function verifies the response code 400",
+					" */",
+					"var verifyResponseCode400 = () => {",
+					"    pm.response.to.have.status(400);",
+					"    console.log(\"Response code is 400\");",
+					"}",
+					"pm.collectionVariables.set(\"verifyResponseCode400\", verifyResponseCode400.toString());",
+					"",
+					"/**",
+					" * This function verifies the response status if OK",
+					" */",
+					"var verifyIfLoginAuthenticated = () => {",
+					"    if(pm.response.to.have.status(\"OK\")){",
+					"        console.log(\"User is Authorized. Successfully logged-in\");",
+					"    }else{",
+					"        console.log(\"Authorization unknown\");",
+					"    }",
+					"}",
+					"pm.collectionVariables.set(\"verifyIfLoginAuthenticated\", verifyIfLoginAuthenticated.toString());",
+					"",
+					"/**",
+					" * This function verifies the response status if Unauthorized",
+					" */",
+					"var verifyIfLoginNotAuthenticated = () => {",
+					"    if(pm.response.to.have.status(\"Unauthorized\")){",
+					"        console.log(\"User is not Authorized.\");",
+					"    }else{",
+					"        console.log(\"Authorization unknown\");",
+					"    }",
+					"}",
+					"pm.collectionVariables.set(\"verifyIfLoginNotAuthenticated\", verifyIfLoginNotAuthenticated.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "verifyResponse",
+			"value": ""
+		},
+		{
+			"key": "verifyInputs",
+			"value": ""
+		},
+		{
+			"key": "verifyIfLoginAuthenticated",
+			"value": ""
+		},
+		{
+			"key": "verifyIfLoginNotAuthenticated",
+			"value": ""
+		},
+		{
+			"key": "verifyResponseCode400",
+			"value": ""
+		},
+		{
+			"key": "graphQLProxy",
+			"value": "https://countries.trevorblades.com/"
+		},
+		{
+			"key": "verifyResponseCode200",
+			"value": ""
+		},
+		{
+			"key": "invalid_url",
+			"value": "https://countries.trevorblades.au/"
+		},
+		{
+			"key": "verifyIfNotAuthenticated",
+			"value": ""
+		},
+		{
+			"key": "verifyIfURLNotFound",
+			"value": ""
+		}
+	]
+}
